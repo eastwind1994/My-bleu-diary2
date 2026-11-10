@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="appTitle">مذكراتي الزرقاء | ملاحظات سرية</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <!-- Google Fonts -->
+    <link href="https://googleapis.com" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        marhey: ['Marhey', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f4f9ff;
+            background-image: radial-gradient(#38bdf8 0.75px, transparent 0.75px), radial-gradient(#38bdf8 0.75px, #f4f9ff 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+
+        .cute-font {
+            font-family: 'Marhey', cursive;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0f2fe;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7dd3fc;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+
+        .theme-blue { background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%); border-color: #7dd3fc; }
+        .theme-slate { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-color: #cbd5e1; }
+        .theme-mint { background: linear-gradient(135deg, #f0fdf4 0%, #e6fffa 100%); border-color: #99f6e4; }
+        .theme-emerald { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-color: #6ee7b7; }
+        .theme-indigo { background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); border-color: #c7d2fe; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-15px) rotate(10deg); opacity: 0.8; }
+            100% { transform: translateY(-30px) rotate(-10deg); opacity: 0; }
+        }
+        .sparkle-anim {
+            position: absolute;
+            pointer-events: none;
+            animation: float 1.5s ease-out forwards;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 pb-12 flex flex-col">
+
+    <!-- Navbar Header -->
+    <header class="sticky top-0 z-30 glass-card shadow-sm border-b border-blue-200">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                <div class="w-11 h-11 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl shadow-md transform hover:rotate-12 transition">
+                    <i class="fa-solid font-bold fa-book-bookmark"></i>
+                </div>
+                <div>
+                    <h1 id="navTitle" class="text-2xl font-bold cute-font text-blue-600 leading-none">مذكراتي الزرقاء</h1>
+                    <p id="navSubtitle" class="text-xs text-blue-400 font-semibold mt-1">عالمك الصغير والآمن لحفظ أسرارك ✨</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                <button onclick="openPinSettingsModal()" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-2xl text-sm font-semibold flex items-center gap-2 transition shadow-sm">
+                    <i class="fa-solid fa-key text-blue-500"></i>
+                    <span id="btnPinText" class="hidden sm:inline">رمز PIN</span>
+                </button>
+                <button onclick="openEntryModal()" class="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-2 shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+                    <i class="fa-solid fa-plus"></i>
+                    <span id="btnNewEntryText">مذكرة جديدة</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-6 flex-grow w-full">
+        
+        <!-- Controls & Filters Section -->
+        <section class="glass-card rounded-3xl p-4 md:p-6 mb-8 shadow-sm">
+            <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                <!-- Search Box -->
+                <div class="relative w-full md:w-80">
+                    <input type="text" id="searchInput" oninput="renderEntries()" placeholder="ابحث في أسرارك ومذكراتك..." 
+                        class="w-full py-2.5 rounded-2xl border-2 border-blue-200 focus:border-blue-400 focus:outline-none bg-white/80 text-sm shadow-inner transition rtl:pl-10 rtl:pr-4 ltr:pl-4 ltr:pr-10">
+                    <i class="fa-solid fa-magnifying-glass absolute top-3.5 text-blue-400 rtl:left-3.5 ltr:right-3.5"></i>
+                </div>
+
+                <!-- Mood Filter Buttons -->
+                <div class="flex flex-wrap items-center justify-center gap-2 w-full md:w-auto">
+                    <span id="filterLabel" class="text-xs font-bold text-gray-500 ml-1 rtl:ml-1">تصفية حسب المزاج:</span>
+                    <button onclick="setFilterMood('all')" id="filter-all" class="mood-filter-btn active bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-bold transition shadow-sm">الكل</button>
+                    <button onclick="setFilterMood('happy')" id="filter-happy" class="mood-filter-btn bg-white hover:bg-blue-50 text-gray-700 px-3 py-1.5 rounded-full text-xs font-semibold transition border border-blue-200">😊 سعيد</button>
+                    <button onclick="setFilterMood('excited')" id="filter-excited" class="mood-filter-btn bg-white hover:bg-blue-50 text-gray-700 px-3 py-1.5 rounded-full text-xs font-semibold transition border border-blue-200">⚡ متحمس</button>
+                    <button onclick="setFilterMood('relaxed')" id="filter-relaxed" class="mood-filter-btn bg-white hover:bg-blue-50 text-gray-700 px-3 py-1.5 rounded-full text-xs font-semibold transition border border-blue-200">😌 مسترخٍ</button>
+                    <button onclick="setFilterMood('sad')" id="filter-sad" class="mood-filter-btn bg-white hover:bg-blue-50 text-gray-700 px-3 py-1.5 rounded-full text-xs font-semibold transition border border-blue-200">🥺 حزين</button>
+                    <button onclick="togglePrivateFilter()" id="filter-private" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-full text-xs font-bold transition border border-slate-300 flex items-center gap-1">
+                        <i class="fa-solid fa-lock text-xs"></i> <span id="privateFilterText">الخاصة فقط</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
